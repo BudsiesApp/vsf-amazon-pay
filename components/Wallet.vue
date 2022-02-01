@@ -30,6 +30,35 @@ export default {
     }
   },
   computed: {
+    readOnly () {
+      const orderState = this.orderState();
+      return !!orderState &&
+        orderState !== states.NEW &&
+        orderState !== states.DRAFT &&
+        orderState !== states.SUSPENDED
+    }
+  },
+  watch: {
+    readOnly: function (newVal, oldVal) {
+      this.setupWidget(true)
+    }
+  },
+  beforeMount () {
+    this.$bus.$on('amazon-invalid-payment-method', this.onInvalidPaymentMethod)
+  },
+  beforeDestroy () {
+    this.$bus.$off('amazon-invalid-payment-method', this.onInvalidPaymentMethod)
+  },
+  mounted () {
+    if (config.amazonPay) {
+      if (this.amazonPaymentsReady() && this.orderReferenceId()) {
+        this.setupWidget()
+      } else {
+        this.$bus.$on('amazon-order-reference-created', this.setupWidget)
+      }
+    }
+  },
+  methods: {
     amazonPaymentsReady () {
       return this.$store.state[KEY].amazonPaymentsReady
     },
@@ -39,46 +68,16 @@ export default {
     orderState () {
       return this.$store.state[KEY].orderState
     },
-    readOnly () {
-      return !!this.orderState &&
-        this.orderState !== states.NEW &&
-        this.orderState !== states.DRAFT &&
-        this.orderState !== states.SUSPENDED
-    }
-  },
-  watch: {
-    readOnly: function (newVal, oldVal) {
-      this.setupWidget(true)
-    }
-  },
-  beforeMount () {
-    this.$bus.$on('amazon-order-constraints', this.onOrderConstraints)
-    this.$bus.$on('amazon-invalid-payment-method', this.onInvalidPaymentMethod)
-  },
-  beforeDestroy () {
-    this.$bus.$off('amazon-order-constraints', this.onOrderConstraints)
-    this.$bus.$off('amazon-invalid-payment-method', this.onInvalidPaymentMethod)
-  },
-  mounted () {
-    if (config.amazonPay) {
-      if (this.amazonPaymentsReady && this.orderReferenceId) {
-        this.setupWidget()
-      } else {
-        this.$bus.$on('amazon-order-reference-created', this.setupWidget)
-      }
-    }
-  },
-  methods: {
     setupWidget (force = false) {
       if (force || !this.isSet) {
         this.isSet = true
         this.loaded = false
         new window.OffAmazonPayments.Widgets.Wallet({
-          sellerId: config.amazonPay.merchantId,
+          sellerId: config.amazonPay.sellerId,
           design: {
             designMode: this.designMode
           },
-          amazonOrderReferenceId: this.orderReferenceId,
+          amazonOrderReferenceId: this.orderReferenceId(),
           onPaymentSelect: this.onPaymentSelect,
           onReady: this.onReady,
           onError: this.onError,
@@ -105,18 +104,6 @@ export default {
       if (error.getErrorCode() === 'BuyerSessionExpired') {
         this.isSet = false
         // TODO: session expired - render button component
-      }
-    },
-    onOrderConstraints (constraints) {
-      this.setupWidget(true)
-      for (let i = 0; i < constraints.length; i++) {
-        const constraint = constraints[i].Constraint
-
-        this.$store.dispatch('notification/spawnNotification', {
-          type: 'error',
-          message: i18n.t(constraint.Description),
-          action1: { label: i18n.t('OK') }
-        })
       }
     },
     onInvalidPaymentMethod () {

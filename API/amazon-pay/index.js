@@ -1,14 +1,19 @@
-import { apiStatus } from '../../../lib/util'
-import { Router } from 'express'
-import HmacSHA256 from 'crypto-js/hmac-sha256'
-import Base64 from 'crypto-js/enc-base64'
-import { URL } from 'url'
-import { parseString } from 'xml2js'
-import uuidv1 from 'uuid/v1'
-
 const ALGORITHM = 'HmacSHA256'
-
 const flatten = require('flat');
+const express = require("express");
+const HmacSHA256 = require("crypto-js/hmac-sha256");
+const Base64 = require("crypto-js/enc-base64");
+const parseString = require("xml2js").parseString;
+const uuidv1 = require("uuid/v1");
+
+const apiStatus = (res, result = 'OK', code = 200, meta = null) => {
+  let apiResult = { code: code, result: result };
+  if (meta !== null) {
+    apiResult.meta = meta;
+  }
+  res.status(code).json(apiResult);
+  return result;
+}
 
 const calculateStringToSignV2 = (parameters, method, { hostname, pathname }) => {
   const sorted = {}
@@ -43,7 +48,7 @@ const sign = (data, secretKey) => {
 }
 
 module.exports = ({ config }) => {
-  let amazonPayApi = Router()
+  let amazonPayApi = express.Router()
 
   amazonPayApi.get('/GetOrderReferenceDetails', (req, res) => {
     let accessKey = config.extensions.amazonPay.accessKey

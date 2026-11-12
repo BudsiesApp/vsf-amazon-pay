@@ -36,6 +36,31 @@ dependency and lock. Rerun against the advanced branch and pass the actual
 merged SHA after merge. No config/test edits or manual tag are needed; preview
 releases are public and immutable.
 
+New feature-branch previews are tracked outside their immutable assets. A
+scheduled workflow checks every recorded branch; only after all are observed
+deleted for 30 days may it delete the prerelease and its assets. The Git tag
+is retained, but the preview download URL stops working. Reusing a preview
+adds the selected feature branch to its associations. An explicitly selected
+commit, tag, maintained/release branch, or protected branch permanently pins
+the preview. Older previews whose association history is unknown are never
+adopted or deleted. The registry is stored on the `preview-cleanup/registry`
+branch, with no changes to release assets. The scheduler lives on the repository
+default branch and checks out `optimuspro`; manual dispatch is a read-only dry run.
+Only `feature/`, `feature-`, `feat/`, `feat-`, or ticket-number-and-hyphen
+branch names qualify; other ambiguous branch names permanently pin the preview.
+
+The 30-day clock starts when deletion is detected, not when a preview is made.
+An observed reappearance resets that branch's clock. The final branch check is
+immediately before deletion, but a brief reappearance between checks or a
+branch created after the final check may be missed. GitHub schedules can be
+delayed or disabled; they never shorten the retention interval.
+
+Publication and cleanup share a repository-wide Git ref lock. Concurrent work
+fails rather than stealing the lock. A failed or interrupted operation leaves
+the lock in place: inspect the workflow/publisher and registry, confirm no
+operation is active and that any partially published preview is safe, then
+resolve the lock with an authorized maintainer. Never automatically clear it.
+
 For the separate explicit-release path, update the source SHA and baseline
 assertions, commit the change, and run the tests. After authorization, create
 and push a new, unused `packages-*` tag pointing at that packaging commit. The

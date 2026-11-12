@@ -14,10 +14,10 @@
 
 ## 3. On-demand previews
 
-- [ ] 3.1 Add the local preview command's required source branch/ref or full-commit input; verify focused tests resolve once to the requested immutable SHA, keep it after branch movement and fail clearly without fallback on an unresolvable selection.
-- [ ] 3.2 Refactor preparation for explicit resolved sources without config/test edits per invocation; verify generic archive/source tests exercise selected revisions while dedicated initial-pin regression assertions remain unchanged and the existing explicit release workflow still passes.
-- [ ] 3.3 Add canonical source/packaging/toolchain identity, command-managed `package-preview-*` prerelease creation at the exact pushed packaging SHA and non-clobber reuse/completion; verify focused tests cover equal keys via different ref spellings, changed source/packaging/toolchain keys, conflicts, partial publication and create/upload races without overwrite or incomplete success.
-- [ ] 3.4 Return exact package/provenance/checksum URLs only after complete verification and document runnable setup, feature iteration, post-merge selection and approval scope; verify CLI/output tests prove no manual tag or configuration/test-edit ceremony and preview identities cannot trigger the existing `packages-*` workflow.
+- [x] 3.1 Add the local preview command's required source branch/ref or full-commit input; verify focused tests resolve once to the requested immutable SHA, keep it after branch movement and fail clearly without fallback on an unresolvable selection.
+- [x] 3.2 Refactor preparation for explicit resolved sources without config/test edits per invocation; verify generic archive/source tests exercise selected revisions while dedicated initial-pin regression assertions remain unchanged and the existing explicit release workflow still passes.
+- [x] 3.3 Add canonical source/packaging/toolchain identity, command-managed `package-preview-*` prerelease creation at the exact pushed packaging SHA and non-clobber reuse/completion; verify focused tests cover equal keys via different ref spellings, changed source/packaging/toolchain keys, conflicts, partial publication and create/upload races without overwrite or incomplete success.
+- [x] 3.4 Return exact package/provenance/checksum URLs only after complete verification and document runnable setup, feature iteration, post-merge selection and approval scope; verify CLI/output tests prove no manual tag or configuration/test-edit ceremony and preview identities cannot trigger the existing `packages-*` workflow.
 
 ## Workflow follow-up
 

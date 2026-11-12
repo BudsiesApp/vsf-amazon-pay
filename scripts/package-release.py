@@ -19,8 +19,9 @@ def git(*args):
     return subprocess.check_output(["git", "-C", str(ROOT), *args])
 
 
-def prepare(output, tag):
-    revision = json.loads((ROOT / "scripts/package-release.json").read_text())["amazonPayRevision"]
+def prepare(output, tag, revision=None, identity=None):
+    if revision is None:
+        revision = json.loads((ROOT / "scripts/package-release.json").read_text())["amazonPayRevision"]
     if not re.fullmatch(r"[0-9a-f]{40}", revision):
         raise ValueError("amazonPayRevision must be a full commit SHA")
     resolved = git("rev-parse", "--verify", revision + "^{commit}").decode().strip()
@@ -50,6 +51,8 @@ def prepare(output, tag):
                 "packagingRevision": packaging, "packages": [{"name": manifest["name"],
                 "version": manifest["version"], "sourceRevision": resolved,
                 "sourcePath": SOURCE_PATH, "asset": ASSET, "sha256": digest}]}
+    if identity is not None:
+        metadata["previewIdentity"] = identity
     (output / "release-manifest.json").write_text(json.dumps(metadata, indent=2) + "\n")
     (output / "SHA256SUMS").write_text(f"{digest}  {ASSET}\n")
 

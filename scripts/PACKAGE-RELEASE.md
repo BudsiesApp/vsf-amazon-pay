@@ -14,8 +14,18 @@ python scripts/package-release.py --output /tmp/amazon-pay-package --tag package
 ```
 
 The output is `amazon-pay.tgz`, `release-manifest.json`, and `SHA256SUMS`.
-For a later package, update the source SHA and the baseline assertions in the
-focused test, commit the change, and run the tests. After authorization, create
+For feature testing, first check out and push the committed publishing tools,
+and push the source branch or commit to this repository's `origin`.
+With Python 3.11+, Git, authenticated `gh` and repository write access, run
+`python3 scripts/preview-packages.py --source-ref <feature-branch-or-full-sha>`.
+The JSON contains the package URL, source and packaging SHAs, Python/zlib
+versions and manifest/checksum URLs. Verify those before updating the API
+dependency and lock. Rerun against the advanced branch and pass the actual
+merged SHA after merge. No config/test edits or manual tag are needed; preview
+releases are public and immutable.
+
+For the separate explicit-release path, update the source SHA and baseline
+assertions, commit the change, and run the tests. After authorization, create
 and push a new, unused `packages-*` tag pointing at that packaging commit. The
 tag workflow publishes all three assets. Do not move a tag or delete historical
 releases: old application revisions may still consume them. A rerun reuses

@@ -16,12 +16,15 @@ python scripts/package-release.py --output /tmp/amazon-pay-package --tag package
 The output is `amazon-pay.tgz`, `release-manifest.json`, and `SHA256SUMS`.
 
 Every push to the maintained `optimuspro` branch automatically publishes a
-non-prerelease `stable-packages-<full-push-SHA>` release. Amazon Pay sources
-come from that exact triggering commit, independently of the historical pin in
-`package-release.json`. The checkout, packaging revision and release tag must
+non-prerelease release with tag and title `optimuspro_<first-seven-push-SHA>`.
+Amazon Pay sources come from that exact triggering commit, independently of the
+historical pin in `package-release.json`. The checkout, packaging revision and release tag must
 agree with that commit. Check the Actions run, manifest and `SHA256SUMS`
 before selecting this URL in a consumer. An identical rerun reuses assets;
-conflicting assets or a tag at a different commit fail without replacement.
+conflicting assets or a tag at a different full commit fail without replacement,
+including when commits share the same seven-character prefix. The manifest
+records the full source and packaging SHA. Older stable, explicit-tag and
+preview releases retain their existing names and assets.
 Publication does not update consumers or deploy applications.
 For feature testing, first check out and push the committed publishing tools,
 and push the source branch or commit to this repository's `origin`.

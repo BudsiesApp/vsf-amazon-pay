@@ -6,6 +6,17 @@ Distribute the existing Amazon Pay API package as a traceable public release ass
 
 ## Requirements
 
+### Requirement: Automatic stable branch publication
+Every push to `optimuspro` SHALL publish a non-prerelease, immutable GitHub release named `stable-packages-<full triggering commit SHA>`. The Amazon Pay source and packaging revision MUST use the exact triggering commit, independently of historical release configuration. Existing tag-based releases and previews MUST remain available and unchanged.
+
+#### Scenario: Stable branch advances
+- **WHEN** a push updates `optimuspro`
+- **THEN** the workflow publishes the prepared archive with provenance and checksums for that exact commit without changing consumers
+
+#### Scenario: Stable release is repeated or conflicts
+- **WHEN** the same stable publication is rerun
+- **THEN** identical assets are reused, and an incompatible tag, release or asset fails without replacing existing content
+
 ### Requirement: Explicit package source selection
 The explicit release-tag path SHALL publish `@vue-storefront-api/amazon-pay` from `API/amazon-pay` through GitHub Actions at a selected source commit independently of the packaging revision. The on-demand path MUST preserve this interface. The initial migration MUST preserve package name, version, runtime dependencies and implementation apart from documented packaging changes.
 

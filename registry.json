@@ -1,0 +1,14 @@
+{
+  "previews": {
+    "37220-preview-verification/branch_5bb5b96": {
+      "branches": {
+        "37220-preview-verification/branch": null
+      },
+      "packaging": "5bb5b9658cef9a2f1ca9aa50c04254b4c15ed156",
+      "pinned": false,
+      "release_id": 443663046
+    }
+  },
+  "repository": "BudsiesApp/vsf-amazon-pay",
+  "version": 1
+}
